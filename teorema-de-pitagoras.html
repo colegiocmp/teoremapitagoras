@@ -1,0 +1,818 @@
+<title>Teorema de Pitágoras</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* Hoja cuadriculada de cuaderno: columna de texto + pizarra interactiva por nivel.
+   Los colores de a (cateto), b (cateto) y c (hipotenusa) son los mismos en toda la página. */
+:root{
+  --paper:#f4f6fa; --paper-glass:rgba(244,246,250,.86); --grid:#e2e7ef; --card:#ffffff; --line:#d3dae6;
+  --ink:#172039; --muted:#58647e; --tri:#d6deeb; --shadow:rgba(23,32,57,.28);
+  --ca:#0d8688; --cb:#c27c00; --cc:#cc3266;
+  --ca-bg:#d7f0ef; --cb-bg:#fbeaca; --cc-bg:#f9dbe5;
+  --l1:#2c9a57; --l2:#d4a800; --l3:#e2731c; --l4:#d2413a;
+  --ok:#1d8648; --ok-bg:#dcf3e4; --bad:#c23b3b; --bad-bg:#fbe1e1;
+  --f-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0f141d; --paper-glass:rgba(15,20,29,.86); --grid:#18202c; --card:#161d29; --line:#2a3446;
+  --ink:#e6ebf3; --muted:#9aa5ba; --tri:#2d384b; --shadow:rgba(0,0,0,.6);
+  --ca:#3fc5c1; --cb:#f0b23a; --cc:#f2709a;
+  --ca-bg:#123a3b; --cb-bg:#3d2e0e; --cc-bg:#441a2b;
+  --l1:#4cc47c; --l2:#e8c43a; --l3:#f59447; --l4:#f0675f;
+  --ok:#4cc47c; --ok-bg:#15361f; --bad:#f07a7a; --bad-bg:#3d1717; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0f141d; --paper-glass:rgba(15,20,29,.86); --grid:#18202c; --card:#161d29; --line:#2a3446;
+  --ink:#e6ebf3; --muted:#9aa5ba; --tri:#2d384b; --shadow:rgba(0,0,0,.6);
+  --ca:#3fc5c1; --cb:#f0b23a; --cc:#f2709a;
+  --ca-bg:#123a3b; --cb-bg:#3d2e0e; --cc-bg:#441a2b;
+  --l1:#4cc47c; --l2:#e8c43a; --l3:#f59447; --l4:#f0675f;
+  --ok:#4cc47c; --ok-bg:#15361f; --bad:#f07a7a; --bad-bg:#3d1717; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.6;
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:20px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
+h2{font-size:clamp(28px,3.6vw,42px);line-height:1.05;font-weight:800;letter-spacing:-.01em}
+h3{font-size:21px;line-height:1.2;font-weight:700}
+p{margin:0}
+.ta{color:var(--ca)} .tb{color:var(--cb)} .tc{color:var(--cc)}
+.mono{font-family:var(--f-mono);font-weight:700}
+.muted{color:var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+svg{display:block;width:100%;height:auto;max-width:100%}
+
+/* barra superior */
+nav.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--paper-glass);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav.top .wrap{display:flex;gap:8px;align-items:center;overflow-x:auto;padding-block:10px;scrollbar-width:none}
+nav.top .wrap::-webkit-scrollbar{display:none}
+.brand{font-family:var(--f-mono);font-weight:700;margin-right:6px;white-space:nowrap;font-size:15px}
+nav.top a{white-space:nowrap;text-decoration:none;color:var(--ink);font-weight:700;font-size:14px;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);display:inline-flex;gap:7px;align-items:center}
+nav.top a i{width:9px;height:9px;border-radius:50%;background:var(--dot,var(--ink))}
+nav.top a:hover{border-color:var(--ink)}
+
+/* portada */
+.hero{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:36px;align-items:center;padding-block:44px 36px}
+.eyebrow{font-family:var(--f-mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+h1{font-size:clamp(42px,6.4vw,78px);line-height:.92;letter-spacing:-.03em;font-weight:800;margin:10px 0 18px}
+h1 .big{display:block;font-family:var(--f-mono);font-size:.62em;letter-spacing:-.02em;margin-top:12px;font-weight:700}
+.lead{font-size:19px;max-width:46ch;margin-bottom:22px}
+.eqbox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:grid;gap:4px;font-family:var(--f-mono);font-weight:700;font-size:clamp(17px,2.2vw,22px);font-variant-numeric:tabular-nums}
+.eqbox .sub{font-size:.78em;color:var(--muted);font-weight:500}
+.badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-body);font-size:14px;font-weight:700;padding:3px 10px;border-radius:999px;margin-top:6px;width:fit-content}
+.badge.yes{background:var(--ok-bg);color:var(--ok)} .badge.no{background:var(--cb-bg);color:var(--ink)}
+.board{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 18px 40px -26px var(--shadow)}
+.ctls{display:grid;gap:10px;margin-top:16px}
+.ctl{display:grid;grid-template-columns:5.5em minmax(0,1fr) 3.2em;gap:10px;align-items:center;font-weight:700;font-size:15px}
+.ctl output{font-family:var(--f-mono);text-align:right;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;margin:0}
+.r-a{accent-color:var(--ca)} .r-b{accent-color:var(--cb)} .r-c{accent-color:var(--cc)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+/* botones */
+.btn{font:700 15px/1.2 var(--f-body);padding:10px 16px;border-radius:10px;border:2px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;transition:transform .12s}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn:active{transform:translateY(1px) scale(.98)}
+.btn[disabled]{opacity:.45;cursor:default}
+:focus-visible{outline:3px solid var(--cc);outline-offset:2px}
+
+/* niveles */
+.level{padding-block:52px;border-top:2px dashed var(--line)}
+.lvl-head{display:grid;gap:10px;margin-bottom:26px}
+.chip{display:inline-flex;align-items:center;gap:8px;width:fit-content;font-family:var(--f-mono);font-size:13px;font-weight:700;padding:4px 12px 4px 8px;border-radius:999px;border:2px solid var(--lc);background:var(--card);letter-spacing:.02em}
+.chip::before{content:"";width:12px;height:12px;border-radius:50%;background:var(--lc)}
+.cols{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:30px;align-items:start}
+.prose{display:grid;gap:14px;max-width:62ch}
+.prose strong{font-weight:700}
+.math{font-family:var(--f-mono);font-weight:700;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;width:fit-content;max-width:100%;overflow-x:auto;font-variant-numeric:tabular-nums}
+.math.xl{font-size:clamp(30px,5vw,48px);padding:14px 22px;letter-spacing:-.02em}
+.stack{display:grid;gap:18px}
+.cap{font-size:14px;color:var(--muted)}
+.note{border-left:4px solid var(--lc,var(--ink));padding:4px 0 4px 14px}
+
+/* receta numerada (es una secuencia real) */
+.recipe{list-style:none;counter-reset:s;padding:0;margin:0;display:grid;gap:10px}
+.recipe li{display:grid;grid-template-columns:30px minmax(0,1fr);gap:12px;align-items:start}
+.recipe li::before{counter-increment:s;content:counter(s);display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--lc,var(--ink));color:var(--card);font:700 15px var(--f-mono)}
+.recipe li.on{animation:flash 1s ease}
+@keyframes flash{0%{background:transparent}30%{background:var(--cb-bg)}100%{background:transparent}}
+
+/* clases de SVG */
+.s-a{fill:var(--ca-bg);stroke:var(--ca);stroke-width:2}
+.s-b{fill:var(--cb-bg);stroke:var(--cb);stroke-width:2}
+.s-c{fill:var(--cc-bg);stroke:var(--cc);stroke-width:2}
+.g-a{stroke:var(--ca);stroke-opacity:.35} .g-b{stroke:var(--cb);stroke-opacity:.35} .g-c{stroke:var(--cc);stroke-opacity:.35}
+.tri{fill:var(--card);stroke:var(--ink);stroke-width:2.5;stroke-linejoin:round}
+.ink{stroke:var(--ink);fill:none}
+.fill-ink{fill:var(--ink)} .fill-muted{fill:var(--muted)} .fill-card{fill:var(--card)} .fill-line{fill:var(--line)}
+.fa{fill:var(--ca)} .fb{fill:var(--cb)} .fc{fill:var(--cc)}
+.stA{stroke:var(--ca)} .stB{stroke:var(--cb)} .stC{stroke:var(--cc)}
+.lbl{font-family:var(--f-mono);font-weight:700}
+.halo{paint-order:stroke;stroke:var(--card);stroke-width:5px;stroke-linejoin:round}
+.handle{fill:var(--card);stroke:var(--ink);stroke-width:2.5;cursor:grab}
+.handle:hover{fill:var(--cb-bg)}
+.handle-ring{fill:none;stroke:var(--cc);stroke-width:2;opacity:.6;animation:ring 1.8s ease-out infinite;transform-box:fill-box;transform-origin:center;pointer-events:none}
+@keyframes ring{from{transform:scale(1);opacity:.7}to{transform:scale(2.2);opacity:0}}
+.svgwrap{touch-action:none}
+
+/* juego de lados */
+.side{stroke-width:6;stroke-linecap:round;stroke:var(--ink);transition:stroke .25s}
+.side.good{stroke:var(--ok)} .side.badc{stroke:var(--bad)}
+.hit{stroke:transparent;stroke-width:30;stroke-linecap:round;cursor:pointer}
+.hit:hover + .side, .hit:focus-visible + .side{stroke:var(--cc)}
+.hit:focus-visible{outline:none}
+.feedback{min-height:3.2em;font-weight:700;padding:10px 14px;border-radius:10px;background:var(--paper)}
+.feedback.ok{background:var(--ok-bg);color:var(--ok)} .feedback.bad{background:var(--bad-bg);color:var(--bad)}
+.shake{animation:shake .4s}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.sidelbl{opacity:0;transition:opacity .35s}
+.show .sidelbl{opacity:1}
+
+/* cuadraditos que se mueven */
+.cell{transition:transform .8s cubic-bezier(.6,.05,.25,1)}
+.pop{animation:pop .45s cubic-bezier(.3,1.6,.5,1) backwards;transform-box:fill-box;transform-origin:center}
+@keyframes pop{from{transform:scale(.1);opacity:0}}
+.fade{transition:opacity .6s}
+
+/* raíz */
+.tries{display:flex;flex-wrap:wrap;gap:6px;font-family:var(--f-mono);font-size:14px;font-variant-numeric:tabular-nums}
+.tries span{padding:4px 8px;border-radius:8px;background:var(--paper);border:1px solid var(--line);animation:pop .35s backwards}
+.tries span.hitn{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.tries span.over{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+input[type=number],input[type=text]{font:700 17px var(--f-mono);padding:9px 12px;border-radius:10px;border:2px solid var(--line);background:var(--card);color:var(--ink);width:8em;max-width:100%}
+input[type=number]:focus,input[type=text]:focus{border-color:var(--ink);outline:none}
+
+/* demostración */
+.ptri{fill:var(--tri);stroke:var(--ink);stroke-width:2;stroke-linejoin:round;transition:transform 1s cubic-bezier(.65,0,.3,1)}
+
+/* patio pasos */
+.steps{display:grid;gap:8px}
+.step{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:center;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);transition:background .3s,border-color .3s,transform .3s}
+.step b{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.step .mono{font-size:17px}
+.step.lit{border-color:var(--l4);background:var(--bad-bg);transform:translateX(4px)}
+.answer{font-family:var(--f-display);font-size:24px;font-weight:800}
+
+/* motion graphic final */
+.mg{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 18px 40px -26px var(--shadow);display:grid;gap:14px}
+.mg-cap{font-family:var(--f-display);font-size:clamp(20px,2.6vw,28px);font-weight:700;min-height:1.3em;transition:opacity .3s}
+.mg-bar{display:grid;grid-template-columns:auto auto minmax(0,1fr);gap:12px;align-items:center}
+.mg-bar input{accent-color:var(--cc)}
+
+/* práctica */
+.prac{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:24px;align-items:start}
+.seg{display:inline-flex;border:2px solid var(--ink);border-radius:10px;overflow:hidden}
+.seg button{font:700 14px var(--f-body);padding:8px 12px;border:0;background:transparent;color:var(--ink);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.problem{font-size:19px;line-height:1.5}
+.score{display:flex;gap:8px;flex-wrap:wrap}
+.score span{font-family:var(--f-mono);font-size:13px;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--paper);border:1px solid var(--line)}
+.hints{display:grid;gap:6px;margin:0;padding-left:1.4em;font-family:var(--f-mono);font-size:15px}
+.hints li{animation:pop .35s backwards}
+.burst{position:fixed;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:50}
+
+/* actividad */
+.act{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}
+.mat{display:flex;flex-wrap:wrap;gap:6px}
+.mat span{font-size:14px;padding:3px 10px;border-radius:999px;border:1px dashed var(--muted)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:15px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left}
+th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-family:var(--f-mono);font-weight:500}
+td input{font:700 15px var(--f-mono);width:100%;min-width:4.5em;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+td input.name{font-family:var(--f-body);min-width:9em}
+td.calc{font-family:var(--f-mono);font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+td .x{border:0;background:none;color:var(--muted);cursor:pointer;font-size:18px}
+.mini{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;display:grid;gap:10px;align-content:start}
+
+footer{padding-block:36px 48px;border-top:2px dashed var(--line);color:var(--muted);font-size:14px}
+
+@media (max-width:860px){
+  .hero,.cols,.prac,.act{grid-template-columns:1fr}
+  .hero{padding-block:28px}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;transition-delay:0ms!important}
+}
+</style>
+
+<nav class="top" aria-label="Secciones">
+  <div class="wrap">
+    <span class="brand"><span class="ta">a²</span>+<span class="tb">b²</span>=<span class="tc">c²</span></span>
+    <a href="#idea" style="--dot:var(--l1)"><i></i>La idea</a>
+    <a href="#lados" style="--dot:var(--l2)"><i></i>Los lados</a>
+    <a href="#formula" style="--dot:var(--l3)"><i></i>La fórmula</a>
+    <a href="#patio" style="--dot:var(--l4)"><i></i>Paso a paso</a>
+    <a href="#movimiento" style="--dot:var(--cc)"><i></i>En movimiento</a>
+  </div>
+</nav>
+
+<header class="wrap hero" id="inicio">
+  <div>
+    <span class="eyebrow">Matemática · Geometría</span>
+    <h1>El teorema de Pitágoras <span class="big"><span class="ta">a²</span> + <span class="tb">b²</span> = <span class="tc">c²</span></span></h1>
+    <p class="lead">Si conocés dos lados de un triángulo rectángulo, podés calcular el tercero sin medirlo. Mové los catetos y mirá cómo los cuadrados de los lados siempre suman lo mismo que el cuadrado grande.</p>
+    <div class="eqbox" aria-live="polite">
+      <div id="hEq1"></div>
+      <div id="hEq2"></div>
+      <div id="hEq3"></div>
+      <span id="hBadge" class="badge yes"></span>
+    </div>
+    <div class="ctls">
+      <label class="ctl"><span class="ta">Cateto a</span><input id="sA" class="r-a" type="range" min="1" max="12" step="1" value="3"><output id="vA">3</output></label>
+      <label class="ctl"><span class="tb">Cateto b</span><input id="sB" class="r-b" type="range" min="1" max="12" step="1" value="4"><output id="vB">4</output></label>
+      <div class="row"><button class="btn ghost" id="hAuto" type="button">Pausar animación</button><span class="cap">Cada cuadradito mide 1 × 1.</span></div>
+    </div>
+  </div>
+  <div class="board"><svg id="heroSvg" viewBox="0 0 520 460" role="img" aria-label="Triángulo rectángulo con un cuadrado dibujado sobre cada lado"></svg></div>
+</header>
+
+<!-- NIVEL 1 -->
+<section class="wrap level" id="idea" style="--lc:var(--l1)">
+  <div class="lvl-head">
+    <span class="chip">Nivel 1 · Muy fácil</span>
+    <h2>La idea</h2>
+  </div>
+  <div class="cols">
+    <div class="prose">
+      <p>El teorema de Pitágoras es una regla que sirve para calcular <strong>cuánto mide un lado de un triángulo</strong> cuando conocemos los otros dos.</p>
+      <p class="note">Pero solo funciona en los <strong>triángulos rectángulos</strong>. Son los que tienen una esquina de 90 grados, como la esquina de una hoja.</p>
+      <p>Podemos usarlo para calcular cuánto debe medir una escalera apoyada en una pared: el <span class="ta"><strong>piso</strong></span>, la <span class="tb"><strong>pared</strong></span> y la <span class="tc"><strong>escalera</strong></span> forman un triángulo rectángulo.</p>
+      <p>Para hacer el cálculo seguimos esta receta:</p>
+      <ol class="recipe" id="ldRecipe">
+        <li><span>Multiplicamos cada lado corto por sí mismo: <span class="mono" id="ldS1"></span></span></li>
+        <li><span>Sumamos los resultados: <span class="mono" id="ldS2"></span></span></li>
+        <li><span>Buscamos qué número multiplicado por sí mismo da esa suma: <span class="mono" id="ldS3"></span></span></li>
+      </ol>
+    </div>
+    <div class="board stack">
+      <svg id="ldSvg" class="svgwrap" viewBox="0 0 360 300" role="img" aria-label="Escalera apoyada en una pared">
+        <defs>
+          <pattern id="brick" width="24" height="12" patternUnits="userSpaceOnUse">
+            <rect width="24" height="12" class="fill-line"/>
+            <path d="M0 11.5H24M12 0V12" class="ink" stroke-opacity=".2"/>
+          </pattern>
+        </defs>
+        <rect x="300" y="14" width="22" height="248" fill="url(#brick)"/>
+        <rect x="10" y="262" width="340" height="30" class="fill-line"/>
+        <line x1="10" y1="262" x2="350" y2="262" class="ink" stroke-width="2.5"/>
+        <path d="M288 262V250H300" class="ink" stroke-width="2"/>
+        <g id="ldDyn"></g>
+        <circle id="ldRingF" class="handle-ring" r="11"/>
+        <circle id="ldFoot" class="handle" r="10" data-h="foot" tabindex="0" aria-label="Pie de la escalera"/>
+        <circle id="ldTop" class="handle" r="10" data-h="top" tabindex="0" aria-label="Punta de la escalera"/>
+      </svg>
+      <div class="ctls" style="margin-top:0">
+        <label class="ctl"><span class="ta">Piso</span><input id="ldD" class="r-a" type="range" min="0.5" max="6" step="0.5" value="3"><output id="ldDv">3 m</output></label>
+        <label class="ctl"><span class="tb">Pared</span><input id="ldH" class="r-b" type="range" min="1" max="6" step="0.5" value="4"><output id="ldHv">4 m</output></label>
+      </div>
+      <p class="cap">Arrastrá los círculos o usá las barras. La escalera se recalcula sola.</p>
+    </div>
+  </div>
+</section>
+
+<!-- NIVEL 2 -->
+<section class="wrap level" id="lados" style="--lc:var(--l2)">
+  <div class="lvl-head">
+    <span class="chip">Nivel 2 · Fácil</span>
+    <h2>Conocer los lados</h2>
+  </div>
+  <div class="cols">
+    <div class="prose">
+      <p>Antes de calcular, tenemos que identificar los lados del triángulo:</p>
+      <p><strong class="ta">Catetos:</strong> son los dos lados que forman la esquina de 90 grados.</p>
+      <p><strong class="tc">Hipotenusa:</strong> es el lado que está enfrente de esa esquina y es el más largo.</p>
+      <p>En el ejemplo de la escalera, la distancia sobre el piso es un cateto, la altura sobre la pared es el otro cateto y la escalera es la hipotenusa.</p>
+    </div>
+    <div class="board stack">
+      <div class="row" style="justify-content:space-between">
+        <h3 id="gAsk">Tocá la hipotenusa</h3>
+        <div class="score"><span id="gScore">Aciertos: 0 de 0</span></div>
+      </div>
+      <svg id="gSvg" viewBox="0 0 320 230" role="group" aria-label="Triángulo para identificar sus lados"></svg>
+      <div class="feedback" id="gFb" aria-live="polite">Buscá primero la esquina de 90° (el cuadradito).</div>
+      <div class="row"><button class="btn" id="gNext" type="button">Otro triángulo</button></div>
+    </div>
+  </div>
+
+  <div class="cols" style="margin-top:34px">
+    <div class="prose">
+      <h3>Si los catetos miden 3 y 4 metros</h3>
+      <ol class="recipe" id="gnSteps">
+        <li><span class="mono"><span class="ta">3 × 3 = 9</span></span></li>
+        <li><span class="mono"><span class="tb">4 × 4 = 16</span></span></li>
+        <li><span>Sumamos: <span class="mono">9 + 16 = 25</span></span></li>
+        <li><span>Como <span class="mono tc">5 × 5 = 25</span>, la escalera debe medir <strong>5 metros</strong>.</span></li>
+      </ol>
+      <p class="cap">Tocá el botón: los 9 cuadraditos y los 16 cuadraditos se juntan y arman un cuadrado de 5 × 5.</p>
+    </div>
+    <div class="board stack">
+      <svg id="gnSvg" viewBox="0 0 360 200" role="img" aria-label="9 cuadraditos y 16 cuadraditos que forman un cuadrado de 5 por 5"></svg>
+      <div class="row"><button class="btn" id="gnBtn" type="button">Juntar los cuadraditos</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- NIVEL 3 -->
+<section class="wrap level" id="formula" style="--lc:var(--l3)">
+  <div class="lvl-head">
+    <span class="chip">Nivel 3 · Intermedio</span>
+    <h2>Entender la fórmula</h2>
+  </div>
+  <div class="cols">
+    <div class="prose">
+      <p>La cuenta anterior se puede escribir con una fórmula:</p>
+      <div class="math xl"><span class="ta">a²</span> + <span class="tb">b²</span> = <span class="tc">c²</span></div>
+      <p>No son números nuevos: las letras representan los lados. Las letras <strong class="ta">a</strong> y <strong class="tb">b</strong> son los catetos, y <strong class="tc">c</strong> es la hipotenusa.</p>
+      <p>El pequeño <strong>2</strong> significa “multiplicar el número por sí mismo”. Por ejemplo: <span class="mono">3² = 3 × 3 = 9</span>. Se llama “al cuadrado” porque dibuja un cuadrado.</p>
+      <div class="math">c² = 3² + 4² = 9 + 16 = 25<br>c = √25 = 5</div>
+      <p>Para encontrar cuánto mide <strong class="tc">c</strong>, buscamos el número que multiplicado por sí mismo da 25. Eso se llama calcular la <strong>raíz cuadrada</strong>. La hipotenusa mide 5 metros.</p>
+    </div>
+    <div class="stack">
+      <div class="board stack">
+        <h3>La máquina de cuadrados</h3>
+        <svg id="sqSvg" viewBox="0 0 240 240" role="img" aria-label="Cuadrado formado por cuadraditos"></svg>
+        <label class="ctl"><span>Número</span><input id="sqN" class="r-c" type="range" min="1" max="12" step="1" value="7"><output id="sqNv">7</output></label>
+        <div class="math" id="sqOut" style="font-size:20px"></div>
+      </div>
+      <div class="board stack">
+        <h3>El buscador de raíces</h3>
+        <p class="cap">Escribí un número y probamos uno por uno cuál, multiplicado por sí mismo, lo da.</p>
+        <form class="row" id="rtForm">
+          <label for="rtIn" class="mono">√</label>
+          <input id="rtIn" type="number" min="1" max="400" value="64" inputmode="numeric">
+          <button class="btn" type="submit">Buscar</button>
+        </form>
+        <div class="tries" id="rtTries" aria-live="polite"></div>
+        <p id="rtMsg" style="font-weight:700"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="cols" style="margin-top:34px">
+    <div class="prose">
+      <h3>¿Por qué funciona? Mirá cómo se reacomodan</h3>
+      <p>Las dos cajas son iguales: miden <span class="mono"><span class="ta">a</span> + <span class="tb">b</span></span> de cada lado y adentro tienen los mismos <strong>4 triángulos</strong>.</p>
+      <p>Si movemos los triángulos sin cambiarlos, el espacio que queda libre tiene que ser el mismo. Primero el espacio libre es un cuadrado <strong class="tc">c²</strong>. Después de moverlos son dos cuadrados: <strong class="ta">a²</strong> y <strong class="tb">b²</strong>.</p>
+      <p class="note" id="pfCap" aria-live="polite">Espacio libre: un cuadrado inclinado, <span class="tc mono">c²</span>.</p>
+      <div class="row"><button class="btn" id="pfBtn" type="button">Mover los triángulos</button></div>
+    </div>
+    <div class="board"><svg id="pfSvg" viewBox="0 0 300 300" role="img" aria-label="Demostración: cuatro triángulos se reacomodan dentro de un cuadrado"></svg></div>
+  </div>
+</section>
+
+<!-- NIVEL 4 -->
+<section class="wrap level" id="patio" style="--lc:var(--l4)">
+  <div class="lvl-head">
+    <span class="chip">Nivel 4 · Un poco más completo</span>
+    <h2>Aplicarlo paso a paso</h2>
+  </div>
+  <div class="cols">
+    <div class="prose">
+      <p><strong>Un patio rectangular mide <span class="ta" id="ptW1">6</span> metros de ancho y <span class="tb" id="ptL1">8</span> metros de largo. ¿Cuánto mide su diagonal?</strong></p>
+      <p>La diagonal es una línea que une una esquina con la esquina opuesta. Al dibujarla, el patio queda dividido en dos triángulos rectángulos. Los lados de <span id="ptW2">6</span> y <span id="ptL2">8</span> metros son los catetos. La diagonal es la hipotenusa.</p>
+      <div class="steps" id="ptSteps">
+        <div class="step"><b>1</b><div><div class="cap">Multiplicamos cada cateto por sí mismo</div><span class="mono" id="ptA"></span></div></div>
+        <div class="step"><b>2</b><div><div class="cap">Sumamos</div><span class="mono" id="ptB"></span></div></div>
+        <div class="step"><b>3</b><div><div class="cap">Buscamos qué número multiplicado por sí mismo da ese resultado</div><span class="mono" id="ptC"></span></div></div>
+      </div>
+      <p class="answer" id="ptAns"></p>
+      <p>Este ejemplo muestra para qué sirve: podemos conocer una distancia haciendo una cuenta, aunque no la midamos directamente.</p>
+    </div>
+    <div class="board stack">
+      <svg id="ptSvg" viewBox="0 0 360 260" role="img" aria-label="Patio rectangular con su diagonal"></svg>
+      <div class="ctls" style="margin-top:0">
+        <label class="ctl"><span class="ta">Ancho</span><input id="ptW" class="r-a" type="range" min="2" max="12" step="1" value="6"><output id="ptWv">6 m</output></label>
+        <label class="ctl"><span class="tb">Largo</span><input id="ptL" class="r-b" type="range" min="2" max="16" step="1" value="8"><output id="ptLv">8 m</output></label>
+      </div>
+      <div class="row"><button class="btn" id="ptPlay" type="button">Resolver paso a paso</button><span class="cap">Cada baldosa mide 1 m.</span></div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- MOTION GRAPHIC -->
+<section class="wrap level" id="movimiento" style="--lc:var(--cc)">
+  <div class="lvl-head">
+    <span class="chip">Final</span>
+    <h2>Pitágoras en movimiento</h2>
+  </div>
+  <div class="mg">
+    <p class="mg-cap" id="mgCap" aria-live="polite">Un triángulo rectángulo</p>
+    <svg id="mgSvg" viewBox="0 0 720 420" role="img" aria-label="Animación: los 9 cuadraditos de a² y los 16 de b² llenan exactamente el cuadrado c² de 25"></svg>
+    <div class="mg-bar">
+      <button class="btn" id="mgPlay" type="button">Pausar</button>
+      <button class="btn ghost" id="mgAgain" type="button">Repetir</button>
+      <input id="mgScrub" type="range" min="0" max="12500" step="10" value="12500" aria-label="Línea de tiempo de la animación">
+    </div>
+  </div>
+</section>
+
+<footer class="wrap">Hecho para la clase de Matemática. Todos los dibujos se pueden tocar y mover.</footer>
+
+<script>
+const $=s=>document.querySelector(s);
+const NS='http://www.w3.org/2000/svg';
+const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+// números con coma decimal, como se escriben acá
+const fmt=n=>String(Math.round(n*100)/100).replace('.',',');
+const root=n=>{const r=Math.round(Math.sqrt(n)*100)/100;return{v:r,exact:Math.abs(r*r-n)<1e-9};};
+const rootTxt=n=>{const r=root(n);return (r.exact?'= ':'≈ ')+fmt(r.v);};
+const f1=n=>n.toFixed(1);
+const line=(x1,y1,x2,y2,cls,extra='')=>`<line class="${cls}" x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(x2)}" y2="${f1(y2)}" ${extra}/>`;
+const txt=(x,y,t,cls,extra='')=>`<text class="${cls}" x="${f1(x)}" y="${f1(y)}" ${extra}>${t}</text>`;
+const svgPoint=(svg,e)=>new DOMPoint(e.clientX,e.clientY).matrixTransform(svg.getScreenCTM().inverse());
+
+/* ---------- PORTADA: triángulo con cuadrados ---------- */
+const H={a:3,b:4,ta:3,tb:4,auto:!reduceMotion,i:0};
+const triples=[[3,4],[6,8],[5,12],[8,6],[12,5],[4,3]];
+function heroRender(){
+  const a=H.a,b=H.b,c=Math.hypot(a,b),W=520,Ht=460,pad=30;
+  const k=Math.min((W-2*pad)/(a+2*b),(Ht-2*pad)/(2*a+b));
+  const X=x=>W/2+(x-a/2)*k, Y=y=>Ht/2-(y-b/2)*k;
+  const P=pts=>pts.map(p=>f1(X(p[0]))+','+f1(Y(p[1]))).join(' ');
+  const L=(p,q,cls)=>line(X(p[0]),Y(p[1]),X(q[0]),Y(q[1]),cls);
+  let s='';
+  s+=`<polygon class="s-a" points="${P([[0,0],[a,0],[a,-a],[0,-a]])}"/>`;
+  for(let i=1;i<a-1e-6;i++){s+=L([i,0],[i,-a],'g-a');s+=L([0,-i],[a,-i],'g-a');}
+  s+=`<polygon class="s-b" points="${P([[0,0],[0,b],[-b,b],[-b,0]])}"/>`;
+  for(let i=1;i<b-1e-6;i++){s+=L([-i,0],[-i,b],'g-b');s+=L([0,i],[-b,i],'g-b');}
+  const u=[-a/c,b/c],n=[b/c,a/c],A=[a,0];
+  s+=`<polygon class="s-c" points="${P([A,[0,b],[b,a+b],[a+b,a]])}"/>`;
+  for(let i=1;i<c-1e-6;i++){
+    const p=[A[0]+u[0]*i,A[1]+u[1]*i]; s+=L(p,[p[0]+n[0]*c,p[1]+n[1]*c],'g-c');
+    const q=[A[0]+n[0]*i,A[1]+n[1]*i]; s+=L(q,[q[0]+u[0]*c,q[1]+u[1]*c],'g-c');
+  }
+  s+=`<polygon class="tri" points="${P([[0,0],[a,0],[0,b]])}"/>`;
+  const m=Math.min(.55,a*.3,b*.3);
+  s+=`<path class="ink" stroke-width="2" d="M${f1(X(m))} ${f1(Y(0))}V${f1(Y(m))}H${f1(X(0))}"/>`;
+  const moving=Math.abs(H.a-H.ta)+Math.abs(H.b-H.tb)>.01;
+  const area=(side,v,sub,cx,cy,cls)=>{
+    const px=side*k, fs=Math.max(12,Math.min(34,px*.3));
+    let o=txt(X(cx),Y(cy)+(px>70?0:fs*.35),moving?Math.round(v):fmt(v),'lbl '+cls,`font-size="${f1(fs)}" text-anchor="middle"`);
+    if(px>70)o+=txt(X(cx),Y(cy)+fs*.95,sub,'lbl fill-muted',`font-size="${f1(Math.max(11,fs*.45))}" text-anchor="middle"`);
+    return o;
+  };
+  const ar=Math.round(H.ta), br=Math.round(H.tb);
+  s+=area(a,a*a,`${ar} × ${ar}`,a/2,-a/2,'fa');
+  s+=area(b,b*b,`${br} × ${br}`,-b/2,b/2,'fb');
+  s+=area(c,c*c,'c × c',A[0]+(u[0]+n[0])*c/2,A[1]+(u[1]+n[1])*c/2,'fc');
+  // nombres de los lados
+  const fsL=Math.max(13,Math.min(20,k*.5));
+  if(a*k>34)s+=txt(X(a/2),Y(0)-6,'a','lbl fa halo',`font-size="${f1(fsL)}" text-anchor="middle"`);
+  if(b*k>34)s+=txt(X(0)+7,Y(b/2)+5,'b','lbl fb halo',`font-size="${f1(fsL)}"`);
+  s+=txt(X(a/2)-(b/c)*12+4,Y(b/2)-(a/c)*12-2,'c','lbl fc halo',`font-size="${f1(fsL)}"`);
+  $('#heroSvg').innerHTML=s;
+}
+function heroText(){
+  const a=H.ta,b=H.tb,s=a*a+b*b,r=root(s);
+  $('#vA').textContent=a; $('#vB').textContent=b;
+  $('#hEq1').innerHTML=`<span class="ta">${a}²</span> + <span class="tb">${b}²</span> = <span class="tc">c²</span>`;
+  $('#hEq2').innerHTML=`<span class="ta">${a*a}</span> + <span class="tb">${b*b}</span> = <span class="tc">${s}</span> <span class="sub">(suma de cuadraditos)</span>`;
+  $('#hEq3').innerHTML=`<span class="tc">c = √${s} ${rootTxt(s)}</span>`;
+  const bd=$('#hBadge');
+  bd.className='badge '+(r.exact?'yes':'no');
+  bd.textContent=r.exact?'Da un número entero: es una terna pitagórica':'No da entero: la raíz tiene decimales';
+}
+let heroDirty=true;
+function heroLoop(){
+  const da=H.ta-H.a,db=H.tb-H.b;
+  if(Math.abs(da)>.003||Math.abs(db)>.003){H.a+=da*.11;H.b+=db*.11;heroDirty=true;}
+  else if(H.a!==H.ta||H.b!==H.tb){H.a=H.ta;H.b=H.tb;heroDirty=true;}
+  if(heroDirty){heroRender();heroDirty=false;}
+  requestAnimationFrame(heroLoop);
+}
+function setAuto(on){H.auto=on;$('#hAuto').textContent=on?'Pausar animación':'Reproducir animación';}
+['sA','sB'].forEach(id=>$('#'+id).addEventListener('input',()=>{
+  setAuto(false);H.ta=+$('#sA').value;H.tb=+$('#sB').value;
+  if(reduceMotion){H.a=H.ta;H.b=H.tb;}
+  heroText();heroDirty=true;
+}));
+$('#hAuto').addEventListener('click',()=>setAuto(!H.auto));
+setInterval(()=>{
+  if(!H.auto)return;
+  H.i=(H.i+1)%triples.length;[H.ta,H.tb]=triples[H.i];
+  $('#sA').value=H.ta;$('#sB').value=H.tb;heroText();
+},3000);
+if(reduceMotion)$('#hAuto').textContent='Reproducir animación';
+heroText();heroLoop();
+
+/* ---------- NIVEL 1: escalera ---------- */
+const LD={d:3,h:4};const WX=300,FY=262,SC=38;
+function ladderDraw(){
+  const fx=WX-LD.d*SC,ty=FY-LD.h*SC,dx=WX-fx,dy=ty-FY,len=Math.hypot(dx,dy),ux=dx/len,uy=dy/len,px=-uy*7,py=ux*7;
+  let s='';
+  s+=line(fx,FY+20,WX,FY+20,'stA','stroke-width="2"')+line(fx,FY+14,fx,FY+26,'stA','stroke-width="2"');
+
+  s+=line(WX+30,ty,WX+30,FY,'stB','stroke-width="2"')+line(WX+24,ty,WX+36,ty,'stB','stroke-width="2"');
+  // escalera: dos largueros y peldaños
+  for(let t=14;t<len-6;t+=19){const x=fx+ux*t,y=FY+uy*t;s+=line(x+px,y+py,x-px,y-py,'stC','stroke-width="3" stroke-linecap="round"');}
+  s+=line(fx+px,FY+py,WX+px,ty+py,'stC','stroke-width="4" stroke-linecap="round"');
+  s+=line(fx-px,FY-py,WX-px,ty-py,'stC','stroke-width="4" stroke-linecap="round"');
+  const c=Math.hypot(LD.d,LD.h);
+  const lx=(fx+WX)/2+uy*30, ly=(FY+ty)/2-ux*30;
+  s+=txt(lx,ly,`${fmt(c)} m`,'lbl fc halo','font-size="17" text-anchor="middle"');
+  s+=txt((fx+WX)/2,FY+20-6,`${fmt(LD.d)} m`,'lbl fa halo','font-size="15" text-anchor="middle"');
+  s+=`<text class="lbl fb halo" font-size="15" text-anchor="middle" transform="translate(${WX+46} ${f1((ty+FY)/2)}) rotate(-90)">${fmt(LD.h)} m</text>`;
+  $('#ldDyn').innerHTML=s;
+  $('#ldFoot').setAttribute('cx',fx);$('#ldFoot').setAttribute('cy',FY);
+  $('#ldRingF').setAttribute('cx',fx);$('#ldRingF').setAttribute('cy',FY);
+  $('#ldTop').setAttribute('cx',WX);$('#ldTop').setAttribute('cy',ty);
+  $('#ldD').value=LD.d;$('#ldH').value=LD.h;
+  $('#ldDv').textContent=fmt(LD.d)+' m';$('#ldHv').textContent=fmt(LD.h)+' m';
+  const d2=LD.d*LD.d,h2=LD.h*LD.h,sum=d2+h2;
+  $('#ldS1').innerHTML=`<span class="ta">${fmt(LD.d)} × ${fmt(LD.d)} = ${fmt(d2)}</span> y <span class="tb">${fmt(LD.h)} × ${fmt(LD.h)} = ${fmt(h2)}</span>`;
+  $('#ldS2').innerHTML=`${fmt(d2)} + ${fmt(h2)} = ${fmt(sum)}`;
+  $('#ldS3').innerHTML=`<span class="tc">√${fmt(sum)} ${rootTxt(sum)} m</span>`;
+}
+(()=>{
+  const svg=$('#ldSvg');let drag=null;
+  const snap=(v,lo,hi)=>Math.min(hi,Math.max(lo,Math.round(v*2)/2));
+  svg.addEventListener('pointerdown',e=>{const h=e.target.dataset&&e.target.dataset.h;if(!h)return;drag=h;svg.setPointerCapture(e.pointerId);$('#ldRingF').style.display='none';e.preventDefault();});
+  svg.addEventListener('pointermove',e=>{
+    if(!drag)return;const p=svgPoint(svg,e);
+    if(drag==='foot'){const v=snap((WX-p.x)/SC,.5,6);if(v!==LD.d){LD.d=v;ladderDraw();}}
+    else{const v=snap((FY-p.y)/SC,1,6);if(v!==LD.h){LD.h=v;ladderDraw();}}
+  });
+  const end=()=>{drag=null;};svg.addEventListener('pointerup',end);svg.addEventListener('pointercancel',end);
+  // teclado sobre los círculos
+  [['ldFoot','d',.5,6],['ldTop','h',1,6]].forEach(([id,key,lo,hi])=>$('#'+id).addEventListener('keydown',e=>{
+    const dir={ArrowLeft:key==='d'?1:-1,ArrowRight:key==='d'?-1:1,ArrowUp:1,ArrowDown:-1}[e.key];
+    if(dir===undefined)return;e.preventDefault();LD[key]=Math.min(hi,Math.max(lo,LD[key]+dir*.5));ladderDraw();
+  }));
+  $('#ldD').addEventListener('input',e=>{LD.d=+e.target.value;ladderDraw();});
+  $('#ldH').addEventListener('input',e=>{LD.h=+e.target.value;ladderDraw();});
+  ladderDraw();
+})();
+
+/* ---------- NIVEL 2: juego de lados ---------- */
+const G={ok:0,n:0,done:false,sides:[],ask:'hip'};
+function gameNew(){
+  const p=2+Math.random()*3,q=2+Math.random()*3,th=Math.random()*Math.PI*2,fl=Math.random()<.5?-1:1;
+  const rot=([x,y])=>[x*Math.cos(th)-y*Math.sin(th),x*Math.sin(th)+y*Math.cos(th)];
+  let pts=[[0,0],[p,0],[0,q*fl]].map(rot);
+  const xs=pts.map(v=>v[0]),ys=pts.map(v=>v[1]);
+  const bw=Math.max(...xs)-Math.min(...xs),bh=Math.max(...ys)-Math.min(...ys),k=Math.min(240/bw,160/bh);
+  const cx=(Math.max(...xs)+Math.min(...xs))/2,cy=(Math.max(...ys)+Math.min(...ys))/2;
+  pts=pts.map(([x,y])=>[160+(x-cx)*k,115+(y-cy)*k]);
+  const [R,P,Q]=pts,gx=(R[0]+P[0]+Q[0])/3,gy=(R[1]+P[1]+Q[1])/3;
+  G.sides=[{a:R,b:P,type:'cat'},{a:R,b:Q,type:'cat'},{a:P,b:Q,type:'hip'}];
+  G.ask=Math.random()<.5?'hip':'cat';G.done=false;
+  const unit=(A,B)=>{const d=Math.hypot(B[0]-A[0],B[1]-A[1]);return[(B[0]-A[0])/d,(B[1]-A[1])/d];};
+  const u=unit(R,P),v=unit(R,Q),m=14;
+  let s=`<polygon points="${pts.map(p=>p.map(f1).join(',')).join(' ')}" class="fill-line" opacity=".5"/>`;
+  s+=`<path class="ink" stroke-width="2" d="M${f1(R[0]+u[0]*m)} ${f1(R[1]+u[1]*m)}L${f1(R[0]+u[0]*m+v[0]*m)} ${f1(R[1]+u[1]*m+v[1]*m)}L${f1(R[0]+v[0]*m)} ${f1(R[1]+v[1]*m)}"/>`;
+  G.sides.forEach((sd,i)=>{
+    s+=line(sd.a[0],sd.a[1],sd.b[0],sd.b[1],'hit',`data-i="${i}" tabindex="0" role="button" aria-label="Lado ${i+1}"`);
+    s+=line(sd.a[0],sd.a[1],sd.b[0],sd.b[1],'side',`id="gs${i}"`);
+  });
+  s+='<g class="labels">';
+  G.sides.forEach(sd=>{
+    const mx=(sd.a[0]+sd.b[0])/2,my=(sd.a[1]+sd.b[1])/2,d=Math.hypot(mx-gx,my-gy)||1;
+    const lx=mx+(mx-gx)/d*20,ly=my+(my-gy)/d*20+5;
+    s+=txt(lx,ly,sd.type==='hip'?'hipotenusa':'cateto',`sidelbl lbl halo ${sd.type==='hip'?'fc':'fa'}`,'font-size="14" text-anchor="middle"');
+  });
+  s+='</g>';
+  const svg=$('#gSvg');svg.innerHTML=s;svg.classList.remove('show');
+  $('#gAsk').textContent=G.ask==='hip'?'Tocá la hipotenusa':'Tocá un cateto';
+  const fb=$('#gFb');fb.className='feedback';fb.textContent='Buscá primero la esquina de 90° (el cuadradito).';
+}
+function gameAnswer(i){
+  if(G.done)return;G.done=true;G.n++;
+  const sd=G.sides[i],good=(G.ask==='hip')===(sd.type==='hip');
+  const el=$('#gs'+i);el.classList.add(good?'good':'badc');
+  const fb=$('#gFb');
+  if(good){G.ok++;fb.className='feedback ok';fb.textContent=sd.type==='hip'?'¡Bien! La hipotenusa está enfrente de la esquina de 90° y es la más larga.':'¡Bien! Los catetos son los dos lados que forman la esquina de 90°.';}
+  else{fb.className='feedback bad';fb.textContent=sd.type==='hip'?'Ese es la hipotenusa: está enfrente de la esquina de 90°. Los catetos tocan esa esquina.':'Ese es un cateto: toca la esquina de 90°. La hipotenusa está enfrente.';
+    if(!reduceMotion){$('#gSvg').classList.add('shake');setTimeout(()=>$('#gSvg').classList.remove('shake'),400);}}
+  $('#gSvg').classList.add('show');
+  $('#gScore').textContent=`Aciertos: ${G.ok} de ${G.n}`;
+}
+$('#gSvg').addEventListener('click',e=>{const i=e.target.dataset&&e.target.dataset.i;if(i!==undefined)gameAnswer(+i);});
+$('#gSvg').addEventListener('keydown',e=>{const i=e.target.dataset&&e.target.dataset.i;if(i!==undefined&&(e.key==='Enter'||e.key===' ')){e.preventDefault();gameAnswer(+i);}});
+$('#gNext').addEventListener('click',gameNew);
+gameNew();
+
+/* ---------- NIVEL 2: 9 + 16 = 25 ---------- */
+(()=>{
+  const svg=$('#gnSvg'),P=20,cells=[];
+  let s=`<rect x="238" y="28" width="104" height="104" rx="4" fill="none" class="ink" stroke-dasharray="5 5" stroke-opacity=".5"/>`;
+  s+=txt(290,90,'?','lbl fill-muted','font-size="34" text-anchor="middle" id="gnQ"');
+  s+=txt(50,160,'3 × 3 = 9','lbl fa','font-size="14" text-anchor="middle" id="gnL1"');
+  s+=txt(150,160,'4 × 4 = 16','lbl fb','font-size="14" text-anchor="middle" id="gnL2"');
+  s+=txt(95,92,'+','lbl fill-ink','font-size="24" text-anchor="middle" id="gnPlus"');
+  s+=txt(290,160,'5 × 5 = 25','lbl fc','font-size="14" text-anchor="middle" id="gnL3" opacity="0"');
+  s+=txt(290,182,'la escalera mide 5 m','lbl fill-muted','font-size="12" text-anchor="middle" id="gnL4" opacity="0"');
+  svg.innerHTML=s;
+  const slotsB=[];for(let r=0;r<5;r++)for(let c=0;c<5;c++)if(!(r<3&&c<3))slotsB.push([r,c]);
+  const mk=(cls,from,to,i)=>{const r=document.createElementNS(NS,'rect');r.setAttribute('width',18);r.setAttribute('height',18);r.setAttribute('rx',3);
+    r.setAttribute('class','cell '+cls);r.style.transitionDelay=(i*28)+'ms';r.style.transform=`translate(${from[0]}px,${from[1]}px)`;svg.appendChild(r);cells.push({r,from,to});};
+  for(let i=0;i<9;i++){const r=Math.floor(i/3),c=i%3;mk('s-a',[20+c*P,58+r*P],[240+c*P,30+r*P],i);}
+  for(let i=0;i<16;i++){const r=Math.floor(i/4),c=i%4,[tr,tc]=slotsB[i];mk('s-b',[110+c*P,48+r*P],[240+tc*P,30+tr*P],9+i);}
+  let merged=false;
+  const steps=[...document.querySelectorAll('#gnSteps li')];
+  $('#gnBtn').addEventListener('click',()=>{
+    merged=!merged;
+    cells.forEach(c=>{const p=merged?c.to:c.from;c.r.style.transform=`translate(${p[0]}px,${p[1]}px)`;});
+    ['gnL1','gnL2','gnPlus'].forEach(id=>svg.querySelector('#'+id).setAttribute('opacity',merged?.25:1));
+    svg.querySelector('#gnQ').setAttribute('opacity',merged?0:1);
+    setTimeout(()=>{['gnL3','gnL4'].forEach(id=>svg.querySelector('#'+id).setAttribute('opacity',merged?1:0));},merged?1300:0);
+    $('#gnBtn').textContent=merged?'Separar otra vez':'Juntar los cuadraditos';
+    if(merged)steps.forEach((li,i)=>setTimeout(()=>{li.classList.remove('on');void li.offsetWidth;li.classList.add('on');},i*350));
+  });
+})();
+
+/* ---------- NIVEL 3: máquina de cuadrados ---------- */
+function sqDraw(){
+  const n=+$('#sqN').value,sz=224/n,svg=$('#sqSvg');let s='';
+  const step=Math.min(28,700/(n*n));
+  for(let r=0;r<n;r++)for(let c=0;c<n;c++){
+    s+=`<rect class="s-c pop" x="${f1(8+c*sz+1)}" y="${f1(8+r*sz+1)}" width="${f1(sz-2)}" height="${f1(sz-2)}" rx="${f1(Math.min(4,sz/6))}" style="animation-delay:${Math.round((r*n+c)*step)}ms"/>`;
+  }
+  svg.innerHTML=s;
+  $('#sqNv').textContent=n;
+  $('#sqOut').innerHTML=`<span class="tc">${n}²</span> = ${n} × ${n} = <span class="tc">${n*n}</span> cuadraditos`;
+}
+$('#sqN').addEventListener('input',sqDraw);sqDraw();
+
+/* ---------- NIVEL 3: buscador de raíces ---------- */
+function rootFind(){
+  let v=Math.round(+$('#rtIn').value);const out=$('#rtTries'),msg=$('#rtMsg');
+  if(!v||v<1||v>400){out.innerHTML='';msg.textContent='Probá con un número entero entre 1 y 400.';return;}
+  let html='',i=1;
+  for(;i*i<v;i++)html+=`<span style="animation-delay:${i*70}ms">${i} × ${i} = ${i*i}</span>`;
+  if(i*i===v){html+=`<span class="hitn" style="animation-delay:${i*70}ms">${i} × ${i} = ${i*i} ✓</span>`;msg.innerHTML=`<span class="tc">√${v} = ${i}</span>, porque ${i} × ${i} = ${v}.`;}
+  else{html+=`<span class="over" style="animation-delay:${i*70}ms">${i} × ${i} = ${i*i} (se pasa)</span>`;msg.innerHTML=`No hay un número entero: <span class="tc">√${v}</span> está entre ${i-1} y ${i}. Con decimales da ${rootTxt(v)}.`;}
+  out.innerHTML=html;
+}
+$('#rtForm').addEventListener('submit',e=>{e.preventDefault();rootFind();});rootFind();
+
+/* ---------- NIVEL 3: demostración por reacomodo ---------- */
+(()=>{
+  const a=3,b=4,S=7,K=40,O=10,svg=$('#pfSvg');
+  const X=v=>O+v*K;
+  let s=`<rect x="${O}" y="${O}" width="${S*K}" height="${S*K}" class="fill-card ink" stroke-width="2.5"/>`;
+  s+=`<g id="pfC" class="fade"><polygon class="s-c" points="${[[a,0],[S,a],[b,S],[0,b]].map(p=>X(p[0])+','+X(p[1])).join(' ')}"/>${txt(X(S/2),X(S/2)+12,'c²','lbl fc','font-size="34" text-anchor="middle"')}</g>`;
+  s+=`<g id="pfAB" class="fade" opacity="0"><rect class="s-a" x="${X(0)}" y="${X(0)}" width="${a*K}" height="${a*K}"/>${txt(X(a/2),X(a/2)+10,'a²','lbl fa','font-size="28" text-anchor="middle"')}
+      <rect class="s-b" x="${X(a)}" y="${X(a)}" width="${b*K}" height="${b*K}"/>${txt(X(a+b/2),X(a+b/2)+12,'b²','lbl fb','font-size="34" text-anchor="middle"')}</g>`;
+  svg.innerHTML=s;
+  // cada triángulo sólo se traslada: misma rotación en las dos posiciones
+  const A=[[0,0,0],[S,0,90],[S,S,180],[0,S,270]],B=[[0,a,0],[S,0,90],[a,S,180],[a,a,270]],delays=[0,0,350,700];
+  const tris=A.map((cfg,i)=>{const p=document.createElementNS(NS,'polygon');p.setAttribute('points',`0,0 ${a*K},0 0,${b*K}`);p.setAttribute('class','ptri');
+    p.style.transformOrigin='0 0';p.style.transitionDelay=delays[i]+'ms';svg.appendChild(p);return p;});
+  // etiquetas a y b sobre los bordes de la caja
+  svg.insertAdjacentHTML('beforeend',txt(X(a/2),O-0+14,'a','lbl fa halo','font-size="13" text-anchor="middle"')+txt(X(a+b/2),O+14,'b','lbl fb halo','font-size="13" text-anchor="middle"'));
+  let state=0;
+  const place=cfg=>tris.forEach((p,i)=>{const[tx,ty,th]=cfg[i];p.style.transform=`translate(${X(tx)}px,${X(ty)}px) rotate(${th}deg)`;});
+  place(A);
+  const go=()=>{
+    state=1-state;place(state?B:A);
+    const c=svg.querySelector('#pfC'),ab=svg.querySelector('#pfAB');
+    if(state){c.setAttribute('opacity',0);setTimeout(()=>ab.setAttribute('opacity',1),1300);}
+    else{ab.setAttribute('opacity',0);setTimeout(()=>c.setAttribute('opacity',1),1300);}
+    $('#pfCap').innerHTML=state?'Espacio libre: dos cuadrados, <span class="ta mono">a²</span> y <span class="tb mono">b²</span>. Es el mismo espacio que antes ocupaba <span class="tc mono">c²</span>.':'Espacio libre: un cuadrado inclinado, <span class="tc mono">c²</span>.';
+    $('#pfBtn').textContent=state?'Volver a como estaba':'Mover los triángulos';
+  };
+  $('#pfBtn').addEventListener('click',go);
+  if(!reduceMotion&&'IntersectionObserver' in window){
+    const io=new IntersectionObserver(es=>{if(es[0].isIntersecting){io.disconnect();setTimeout(()=>{if(state===0)go();},700);}},{threshold:.6});io.observe(svg);
+  }
+})();
+
+/* ---------- NIVEL 4: patio ---------- */
+let ptTimers=[];
+function patioDraw(animate){
+  const w=+$('#ptW').value,l=+$('#ptL').value,svg=$('#ptSvg');
+  const k=Math.min(290/l,180/w),x0=(360-l*k)/2,y0=(250-w*k)/2+6,x1=x0+l*k,y1=y0+w*k;
+  let s=`<rect x="${f1(x0)}" y="${f1(y0)}" width="${f1(l*k)}" height="${f1(w*k)}" class="fill-card"/>`;
+  s+=`<polygon points="${f1(x0)},${f1(y0)} ${f1(x0)},${f1(y1)} ${f1(x1)},${f1(y1)}" class="s-a" stroke="none" opacity=".55"/>`;
+  s+=`<polygon points="${f1(x0)},${f1(y0)} ${f1(x1)},${f1(y0)} ${f1(x1)},${f1(y1)}" class="s-b" stroke="none" opacity=".55"/>`;
+  for(let i=1;i<l;i++)s+=line(x0+i*k,y0,x0+i*k,y1,'ink','stroke-opacity=".15"');
+  for(let i=1;i<w;i++)s+=line(x0,y0+i*k,x1,y0+i*k,'ink','stroke-opacity=".15"');
+  s+=`<rect x="${f1(x0)}" y="${f1(y0)}" width="${f1(l*k)}" height="${f1(w*k)}" class="ink" stroke-width="2.5"/>`;
+  s+=`<path class="ink" stroke-width="2" d="M${f1(x0+12)} ${f1(y1)}V${f1(y1-12)}H${f1(x0)}"/>`;
+  const len=Math.hypot(l*k,w*k);
+  s+=`<line id="ptDiag" x1="${f1(x0)}" y1="${f1(y0)}" x2="${f1(x1)}" y2="${f1(y1)}" class="stC" stroke-width="4" stroke-linecap="round" stroke-dasharray="${f1(len)}" stroke-dashoffset="0"/>`;
+  s+=txt((x0+x1)/2,y0-10,`largo ${l} m`,'lbl fb','font-size="14" text-anchor="middle"');
+  s+=`<text class="lbl fa" font-size="14" text-anchor="middle" transform="translate(${f1(x0-10)} ${f1((y0+y1)/2)}) rotate(-90)">ancho ${w} m</text>`;
+  const sum=w*w+l*l;
+  s+=txt((x0+x1)/2+8,(y0+y1)/2-8,`${rootTxt(sum).replace('= ','')} m`,'lbl fc halo','font-size="17" text-anchor="middle" id="ptDl"');
+  svg.innerHTML=s;
+  $('#ptWv').textContent=w+' m';$('#ptLv').textContent=l+' m';
+  ['ptW1','ptW2'].forEach(id=>$('#'+id).textContent=w);['ptL1','ptL2'].forEach(id=>$('#'+id).textContent=l);
+  $('#ptA').innerHTML=`<span class="ta">${w} × ${w} = ${w*w}</span> y <span class="tb">${l} × ${l} = ${l*l}</span>`;
+  $('#ptB').innerHTML=`${w*w} + ${l*l} = ${sum}`;
+  const r=root(sum);
+  $('#ptC').innerHTML=r.exact?`<span class="tc">${r.v} × ${r.v} = ${sum}</span>`:`<span class="tc">√${sum} ≈ ${fmt(r.v)}</span> (no da entero)`;
+  $('#ptAns').innerHTML=`La diagonal del patio mide <span class="tc">${r.exact?'':'unos '}${fmt(r.v)} metros</span>.`;
+  if(animate&&!reduceMotion){
+    const d=svg.querySelector('#ptDiag'),dl=svg.querySelector('#ptDl');
+    d.style.strokeDashoffset=len;dl.style.opacity=0;d.getBoundingClientRect();
+    d.style.transition='stroke-dashoffset .9s cubic-bezier(.65,0,.35,1)';d.style.strokeDashoffset=0;
+    dl.style.transition='opacity .4s .8s';dl.style.opacity=1;
+  }
+}
+function patioPlay(){
+  ptTimers.forEach(clearTimeout);ptTimers=[];
+  const steps=[...document.querySelectorAll('#ptSteps .step')];steps.forEach(s=>s.classList.remove('lit'));
+  const svg=$('#ptSvg'),d=svg.querySelector('#ptDiag'),dl=svg.querySelector('#ptDl'),len=+d.getAttribute('stroke-dasharray');
+  d.style.transition='none';d.style.strokeDashoffset=len;dl.style.transition='none';dl.style.opacity=0;d.getBoundingClientRect();
+  steps.forEach((s,i)=>ptTimers.push(setTimeout(()=>{steps.forEach(x=>x.classList.remove('lit'));s.classList.add('lit');},i*1100)));
+  ptTimers.push(setTimeout(()=>{d.style.transition='stroke-dashoffset 1.2s cubic-bezier(.65,0,.35,1)';d.style.strokeDashoffset=0;dl.style.transition='opacity .4s 1.1s';dl.style.opacity=1;},2200));
+  ptTimers.push(setTimeout(()=>steps.forEach(x=>x.classList.remove('lit')),4600));
+}
+['ptW','ptL'].forEach(id=>$('#'+id).addEventListener('input',()=>patioDraw(true)));
+$('#ptPlay').addEventListener('click',patioPlay);
+patioDraw(false);
+
+/* ---------- FINAL: motion graphic con línea de tiempo ---------- */
+(()=>{
+  const svg=$('#mgSvg'),K=38,TOTAL=12500;
+  const X=x=>30+(x+4)*K,Y=y=>20+(7-y)*K;
+  const cl=v=>Math.max(0,Math.min(1,v)),seg=(t,a,b)=>cl((t-a)/(b-a));
+  const eio=v=>v<.5?4*v*v*v:1-Math.pow(-2*v+2,3)/2,eout=v=>1-Math.pow(1-v,3);
+  const back=v=>{const c1=1.7,c3=c1+1;return 1+c3*Math.pow(v-1,3)+c1*Math.pow(v-1,2);};
+  const P=pts=>pts.map(p=>f1(X(p[0]))+','+f1(Y(p[1]))).join(' ');
+  const a=3,b=4,c=5,A=[a,0],u=[-a/c,b/c],n=[b/c,a/c],thT=Math.atan2(n[1],n[0]);
+  // cuadraditos: salen de a² y b², llegan a su lugar dentro de c²
+  const cells=[],slotsB=[];
+  for(let q=0;q<5;q++)for(let p=0;p<5;p++)if(!(p<3&&q<3))slotsB.push([p,q]);
+  const tgt=(p,q)=>[A[0]+u[0]*(p+.5)+n[0]*(q+.5),A[1]+u[1]*(p+.5)+n[1]*(q+.5)];
+  for(let j=0;j<3;j++)for(let i=0;i<3;i++)cells.push({cls:'s-a',from:[i+.5,-j-.5],to:tgt(i,j)});
+  for(let j=0;j<4;j++)for(let i=0;i<4;i++){const[p,q]=slotsB[j*4+i];cells.push({cls:'s-b',from:[-i-.5,j+.5],to:tgt(p,q)});}
+  const caps=[[0,'Un triángulo rectángulo'],[1600,'Dos catetos, a y b, y una hipotenusa, c'],[2600,'Sobre cada lado dibujamos un cuadrado'],[4300,'a² tiene 9 cuadraditos y b² tiene 16'],[5100,'Movemos los cuadraditos de a² y b² al cuadrado grande…'],[7900,'¡Lo llenan justo! No sobra ni falta ninguno'],[8300,'Por eso: a² + b² = c²']];
+  const square=(P1,P2,g,cls)=>{const nx=P2[1]-P1[1],ny=-(P2[0]-P1[0]);// normal hacia afuera (sentido horario)
+    return `<polygon class="${cls}" points="${P([P1,P2,[P2[0]+nx*g,P2[1]+ny*g],[P1[0]+nx*g,P1[1]+ny*g]])}"/>`;};
+  function render(t){
+    let s='';
+    // cuadrados que crecen desde cada lado
+    const gA=eout(seg(t,2600,3400)),gB=eout(seg(t,3000,3800)),gC=eout(seg(t,3400,4200));
+    const fly=seg(t,5100,5300); // los cuadrados de origen quedan punteados cuando se vacían
+    if(gA>0)s+=square([0,0],[a,0],gA,'s-a').replace('/>',` style="fill-opacity:${f1(1-fly)};stroke-dasharray:${fly>0?'6 5':'none'}"/>`);
+    if(gB>0)s+=square([0,b],[0,0],gB,'s-b').replace('/>',` style="fill-opacity:${f1(1-fly)};stroke-dasharray:${fly>0?'6 5':'none'}"/>`);
+    if(gC>0)s+=square(A,[0,b],gC,'s-c');
+    // signo de pregunta en c²
+    const mid=[A[0]+(u[0]+n[0])*c/2,A[1]+(u[1]+n[1])*c/2];
+    const qOp=seg(t,4200,4600)*(1-seg(t,5300,5800));
+    if(qOp>0)s+=txt(X(mid[0]),Y(mid[1])+16,'?','lbl fc',`font-size="46" text-anchor="middle" opacity="${f1(qOp)}"`);
+    // cuadraditos
+    cells.forEach((cel,i)=>{
+      const appear=i<9?seg(t,3500+i*45,3850+i*45):seg(t,3900+(i-9)*35,4250+(i-9)*35);
+      if(appear<=0)return;
+      const st=5300+i*70,e=eio(seg(t,st,st+900));
+      const lift=Math.sin(Math.PI*e)*1.4;
+      const cx=cel.from[0]+(cel.to[0]-cel.from[0])*e+n[0]*lift,cy=cel.from[1]+(cel.to[1]-cel.from[1])*e+n[1]*lift;
+      const th=thT*e,h=.43*back(appear),e1=[Math.cos(th)*h,Math.sin(th)*h],e2=[-Math.sin(th)*h,Math.cos(th)*h];
+      const pts=[[cx-e1[0]-e2[0],cy-e1[1]-e2[1]],[cx+e1[0]-e2[0],cy+e1[1]-e2[1]],[cx+e1[0]+e2[0],cy+e1[1]+e2[1]],[cx-e1[0]+e2[0],cy-e1[1]+e2[1]]];
+      s+=`<polygon class="${cel.cls}" stroke-width="1.5" points="${P(pts)}"/>`;
+    });
+    // triángulo que se dibuja solo
+    const dr=eio(seg(t,0,1400)),per=(a+b+c)*K;
+    s+=`<polygon class="tri" points="${P([[0,0],[a,0],[0,b]])}" style="fill-opacity:${f1(seg(t,900,1500))};stroke-dasharray:${f1(per)};stroke-dashoffset:${f1(per*(1-dr))}"/>`;
+    const ra=seg(t,1200,1600);
+    if(ra>0)s+=`<path class="ink" stroke-width="2" opacity="${f1(ra)}" d="M${f1(X(.5))} ${f1(Y(0))}V${f1(Y(.5))}H${f1(X(0))}"/>`;
+    // nombres de los lados
+    const lb=(x,y,str,cls,t0)=>{const v=seg(t,t0,t0+350);return v>0?txt(x,y+(1-eout(v))*12,str,`lbl ${cls} halo`,`font-size="22" text-anchor="middle" opacity="${f1(v)}"`):'';};
+    s+=lb(X(a/2),Y(0)-10,'a','fa',1600)+lb(X(0)+16,Y(b/2)+8,'b','fb',1800)+lb(X(a/2)-6,Y(b/2)-14,'c','fc',2000);
+    // números de cada área
+    const num=(x,y,str,cls,t0,t1)=>{const v=seg(t,t0,t0+400)*(t1?1-seg(t,t1,t1+300):1);return v>0?txt(x,y,str,`lbl ${cls} halo`,`font-size="30" text-anchor="middle" opacity="${f1(v)}"`):'';};
+    s+=num(X(a/2),Y(-a/2)+10,'9','fa',4300,5100)+num(X(-b/2),Y(b/2)+10,'16','fb',4500,5100);
+    const done=seg(t,7800,8200);
+    if(done>0)s+=txt(X(mid[0]),Y(mid[1])+16,'25',`lbl fill-ink halo`,`font-size="${f1(30+16*back(done))}" text-anchor="middle" opacity="${f1(done)}"`);
+    // fórmula a la derecha
+    const fl=(y,html,size,t0)=>{const v=seg(t,t0,t0+600);return v>0?`<text class="lbl" x="${f1(478+(1-eout(v))*30)}" y="${y}" font-size="${size}" opacity="${f1(v)}">${html}</text>`:'';};
+    s+=fl(150,'<tspan class="fa">a²</tspan><tspan class="fill-ink"> + </tspan><tspan class="fb">b²</tspan><tspan class="fill-ink"> = </tspan><tspan class="fc">c²</tspan>',40,8300);
+    s+=fl(210,'<tspan class="fa">3²</tspan><tspan class="fill-ink"> + </tspan><tspan class="fb">4²</tspan><tspan class="fill-ink"> = </tspan><tspan class="fc">5²</tspan>',30,8900);
+    s+=fl(260,'<tspan class="fa">9</tspan><tspan class="fill-ink"> + </tspan><tspan class="fb">16</tspan><tspan class="fill-ink"> = </tspan><tspan class="fc">25</tspan>',30,9500);
+    const ul=eio(seg(t,10100,10700));
+    if(ul>0)s+=`<line x1="478" y1="170" x2="${f1(478+ul*212)}" y2="170" class="stC" stroke-width="4" stroke-linecap="round"/>`;
+    svg.innerHTML=s;
+    let cap=caps[0][1];for(const[t0,str]of caps)if(t>=t0)cap=str;
+    const ce=$('#mgCap');if(ce.textContent!==cap)ce.textContent=cap;
+    $('#mgScrub').value=Math.round(t);
+  }
+  let t=TOTAL,playing=false,last=0;
+  const setPlay=on=>{playing=on;$('#mgPlay').textContent=on?'Pausar':'Reproducir';if(on){last=0;requestAnimationFrame(tick);}};
+  function tick(ts){
+    if(!playing)return;
+    const dt=last?Math.min(60,ts-last):16;last=ts;t+=dt;
+    if(t>TOTAL){t=0;} // vuelve a empezar solo
+    render(t);requestAnimationFrame(tick);
+  }
+  $('#mgPlay').addEventListener('click',()=>{if(!playing&&t>=TOTAL)t=0;setPlay(!playing);});
+  $('#mgAgain').addEventListener('click',()=>{t=0;render(t);if(!playing)setPlay(true);});
+  $('#mgScrub').addEventListener('input',e=>{setPlay(false);t=+e.target.value;render(t);});
+  render(t);setPlay(false);
+  if(!reduceMotion&&'IntersectionObserver' in window){
+    const io=new IntersectionObserver(es=>{if(es[0].isIntersecting){io.disconnect();t=0;setPlay(true);}},{threshold:.4});io.observe(svg);
+  }
+})();
+
+</script>
